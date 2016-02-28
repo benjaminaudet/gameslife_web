@@ -1,0 +1,271 @@
+<?php
+session_start();
+  header('Content-type: text/html; charset=utf-8');
+  
+  //----------------------------------//
+  require_once 'database/mysql.php';
+  set_session($bdd);
+  $titre = 'Système de vote';
+  //----------------------------------//
+
+  require 'inc/head.php';
+  
+  if(isset($_SESSION['admin']) && !empty($_SESSION['admin'])) 
+  {
+  	?>
+	<body>
+
+		<!-- HEADER -->
+		<header id="header">
+
+			<div id="logo-group">
+
+				<span id="logo"> 
+					<img src="img/logo.png"> 
+				</span>
+
+				<!-- AJAX-DROPDOWN : control this dropdown height, look and feel from the LESS variable file -->
+				<?php include 'doc/notifications.php'; ?>
+				<!-- END AJAX-DROPDOWN -->
+			</div>
+
+			<!-- pulled right: nav area -->
+			<div class="pull-right">
+
+				<!-- collapse menu button -->
+				<div id="hide-menu" class="btn-header pull-right">
+					<span> <a href="javascript:void(0);" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+				</div>
+				<!-- end collapse menu -->
+
+				<!-- logout button -->
+				<div id="logout" class="btn-header transparent pull-right">
+					<span> 
+						<a href="deconnexion.php" title="Se déconnecter">
+							<i class="fa fa-sign-out"></i>
+						</a> 
+					</span>
+				</div>
+				<!-- end logout button -->
+
+				<!-- input: search field -->
+					<?php include 'doc/recherche.php'; ?>
+				<!-- end input: search field -->
+
+				<?php include 'inc/translate.php'; ?>
+
+			</div>
+			<!-- end pulled right: nav area -->
+
+		</header>
+		<!-- END HEADER -->
+
+		<!-- Left panel : Navigation area -->
+		<aside id="left-panel">
+			<?php include 'inc/aside.php'; ?>
+		</aside>
+		<!-- END NAVIGATION -->
+
+		<!-- MAIN PANEL -->
+		<div id="main" role="main">
+
+			<!-- MAIN CONTENT -->
+				<br><article style="padding:25px;">
+					<?php include 'doc/situation.php'; ?>
+
+
+
+						<div class="jarviswidget jarviswidget-sortable col-sm-4">
+
+								<header role="heading">
+									<h2>Ajouter un site de vote</h2>
+								</header>
+
+								<!-- widget div-->
+								<div role="content">
+
+									<!-- widget edit box -->
+									<div class="jarviswidget-editbox">
+										<!-- This area used as dropdown edit box -->
+
+									</div>
+									<!-- end widget edit box -->
+		                            <?php
+									if(isset($_POST['nom']) && isset($_POST['url']) && isset($_POST['temps']) && isset($_POST['image'])) 
+									{
+										$nom = secure($_POST['nom']);
+										$url = ($_POST['url']);
+										$temps = secure($_POST['temps']);
+										$image = secure($_POST['image']);
+
+										$req = $bdd->prepare('INSERT INTO vote_sites(nom, url, temps, image) 
+											VALUES(:nom, :url, :temps, :image)');
+										$req -> bindParam(':nom', $nom);
+										$req -> bindParam(':url', $url);
+										$req -> bindParam(':temps', $temps);
+										$req -> bindParam(':image', $image);
+										$req -> execute();
+									?>
+		                                    <div class="alert alert-success alert-block">
+		                                        <a class="close" data-dismiss="alert" href="#">×</a>
+		                                        <h4 class="alert-heading">Succès :</h4>
+		                                         Le site <b><?php echo $_POST['url']; ?></b> a été ajouté avec succès.
+		                                    </div>
+									<?php
+									}
+									?>
+									<!-- widget content -->
+									<div class="widget-body">
+										<div class="alert alert-info">
+											Le temps doit être exprimé en minutes. <br>
+											A savoir, 1 heure = 60 minutes. 
+
+											<br>Par exemple si vous avez 6h35 d'attente entre chaque vote c'est égal à :
+											<br>
+											- (6*60) + 35 = 395
+										</div>
+
+										<form action="" class="smart-form" method="post">
+											<header>
+												Remplissez le formulaire ci-dessous
+											</header>
+
+											<fieldset>
+
+												<section>
+													<label class="label">Nom du site</label>
+													<label class="input">
+														<input type="text" name="nom" id="basicround">
+													</label>
+												</section>
+
+												<section>
+													<label class="label">URL (avec HTTP)</label>
+													<label class="input">
+														<input type="text" name="url" id="basicround">
+													</label>
+												</section>
+
+												<section>
+													<label class="label">Temps entre chaque vote (en minutes)</label>
+													<label class="input">
+														<input type="text" name="temps" id="basicround">
+													</label>
+												</section>
+
+												<section>
+													<label class="label">URL de l'image</label>
+													<label class="input">
+														<input type="text" name="image" id="basicround">
+													</label>
+												</section>
+
+
+											</fieldset>
+
+
+											</fieldset>
+
+											<footer>
+												<button type="submit" class="btn btn-primary" name="submit">Ajouter</div>
+											</footer>
+
+										</form>
+									</div>
+									<!-- end widget content -->
+
+								</div>
+								<!-- end widget div -->
+
+
+						<div class="jarviswidget jarviswidget-sortable col-sm-6" style="margin-left:25px;">
+
+								<header role="heading">
+									<h2>Gestion des récompenses</h2>
+								</header>
+
+								<!-- widget div-->
+								<div role="content">
+
+									<!-- widget edit box -->
+									<div class="jarviswidget-editbox">
+										<!-- This area used as dropdown edit box -->
+
+									</div>
+									<!-- end widget edit box -->
+									<!-- widget content -->
+									<div class="widget-body">
+										<?php
+										if(isset($_GET['suppr']))
+										{
+											$suppr = $_GET['suppr'];
+											// SPR
+											$delete = $bdd->prepare('DELETE FROM vote_sites WHERE id = :suppr');
+											$delete -> bindParam(':suppr', $suppr);
+											$delete -> execute();
+
+											$show->showSuccess("Le site a été supprimé avec succès.");
+										}			
+														
+										?>
+										<table class='table table-striped dataTable table-bordered'>
+											<thead>
+                                                <tr>
+                                                      <th>Nom</th>
+                                                      <th>URL</th>
+                                                      <th>Temps</th>
+                                                      <th>Actions</th>
+                                                </tr>
+											</thead>
+											<tbody>
+											<?php
+												$requete = $bdd->prepare("SELECT * FROM vote_sites");
+												$requete->execute();
+                                            
+                                                while($resultats = $requete->fetch(PDO::FETCH_OBJ))
+                                                {
+                                                            echo '<tr>';
+															  echo '<td>'.$resultats->nom.'</td>';
+															  echo '<td>'.$resultats->url.'</td>';
+															  echo '<td>'.$resultats->temps.' minutes</td>';
+															  
+															  echo '<td>';
+															  	echo '<div class="btn-group">';
+																echo ' <a href="?suppr='.$resultats->id.'" class="btn btn-labeled btn-danger"><span class="btn-label"><i class="fa fa-ban"></i></span>Supprimer</a>';
+																echo '</div>';
+
+															  echo '</td>';
+                                                        echo '</tr>';
+                                                }
+                                             ?>
+											</tbody>
+										</table>
+									</div>
+									<!-- end widget content -->
+
+								</div>
+								<!-- end widget div -->
+
+							</div>
+
+							
+						</article>
+
+						
+			<!-- END MAIN CONTENT -->
+
+			<?php include 'inc/admin.php'; ?>
+
+		</div>
+		<!-- END MAIN PANEL -->
+
+		<!--================================================== -->
+
+		<?php include 'inc/footer.php'; ?>
+
+	</body>
+
+</html>
+<?php
+}
+?>

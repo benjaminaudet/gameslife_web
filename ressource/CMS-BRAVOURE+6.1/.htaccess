@@ -1,0 +1,10 @@
+RewriteEngine On
+Options -Indexes
+RewriteCond %{REQUEST_FILENAME}.php -f 
+RewriteRule ^(.*)$ $1.php [L] 
+
+RewriteRule ^membre/([^/]*)$ /membres/membres.php?membre=$1 [L]
+RewriteRule ^new/([^/]*)$ /accueil/voir.php?new=$1 [L]
+RewriteRule ^pages/([^/]*)$ /page/index.php?titre=$1 [L]
+RewriteRule ^product/([^/]*)$ /boutique/buy_object.php?$1 [L]
+ErrorDocument 404 /accueil/erreur.php

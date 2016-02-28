@@ -1,0 +1,18 @@
+RewriteEngine On
+Options -Indexes
+RewriteCond %{REQUEST_FILENAME}.php -f 
+RewriteRule ^(.*)$ $1.php [L] 
+
+RewriteRule ^membre/([^/]*)$ /membres/membres.php?membre=$1 [L]
+RewriteRule ^new/([^/]*)$ /accueil/voir.php?new=$1 [L]
+RewriteRule ^pages/([^/]*)$ /page/index.php?titre=$1 [L]
+
+
+RewriteRule ^forums/([^/]*)$ /forum/view_forum.php?forums=$1 [L]
+
+RewriteRule ^create-threads/([^/]*)$ /forum/create-threads.php?forums=$1 [L]
+
+
+RewriteRule ^threads/([^/]*)$ /forum/threads.php?titre=$1 [L]
+RewriteRule ^threads/([^/]*)/page/([^/]*)$ /forum/threads.php?titre=$1&page=$2 [L]
+ErrorDocument 404 /accueil/erreur.php

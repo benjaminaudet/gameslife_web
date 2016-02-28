@@ -1,0 +1,12 @@
+=== INSTALLER LE FORUM SUR SAMANTCMS ==
+
+Merci de suivre ces étapes afin d'installer le CMS :
+1. Ouvrez le dossier admin, puis transférez les fichiers se trouvant à l'intérieurs dans le dossier admin de votre FTP
+2. Transférez aside.php dans le dossier admin/inc
+3. Transférez le dossier forum dans votre FTP
+4. Le .htaccess est à mettre dans la racine de votre FTP, remplacez le par celui actuel.
+5. Ouvrez jointures/header.php et collez ceci dans après le <li> accueil.
+
+<li <?php if($titre == 'Forum') { echo 'class="active"'; } ?>><a href="../forum/"> Forum</a></li>
+
+6. Allez sur la page suivante : site.fr/install/forum.php
